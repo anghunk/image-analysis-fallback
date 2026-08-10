@@ -1,61 +1,73 @@
 # image-analysis-fallback
 
-ZCode skill：当当前模型不支持多模态、无法直接查看图片时，自动调用 DashScope 多模态模型（qwen3.7-plus）分析图片，把结果转成文字，让当前模型继续执行任务。
+Bridge any non-multimodal model to an external vision API: when the current model cannot see an image, this skill sends it to a multimodal model (default: `qwen3.7-plus`) and feeds the textual result back, so the agent can continue the task.
 
-## 安装
+一个通用的"视觉桥接"技能：当当前模型不支持多模态、无法直接查看图片时，自动将图片交给外部多模态模型（默认 `qwen3.7-plus`）分析，把文字结果反馈回来，让当前模型继续执行任务。
+
+Works with any agent that supports `SKILL.md` — Claude Code, Codex, Cursor, ZCode, and more. No platform-specific dependencies.
+兼容所有支持 `SKILL.md` 的 agent（Claude Code、Codex、Cursor、ZCode 等），无任何平台绑定。
+
+## Install / 安装
+
+Clone or symlink this repo into any skill directory:
+将本仓库克隆或软链到任意技能的扫描目录：
 
 ```bash
-# 用户级（所有 workspace 生效）
-git clone https://github.com/anghunk/image-analysis-fallback.git ~/.zcode/skills/image-analysis-fallback
-
-# 或项目级（随仓库共享）
-git clone https://github.com/anghunk/image-analysis-fallback.git <repo>/.zcode/skills/image-analysis-fallback
+git clone https://github.com/anghunk/image-analysis-fallback.git ~/.claude/skills/image-analysis-fallback
 ```
 
-## 配置
+| Tool | Skill directory |
+|---|---|
+| Claude Code | `~/.claude/skills/` |
+| Codex | `~/.codex/skills/` |
+| Cursor | `.cursor/skills/` |
+| ZCode | `~/.zcode/skills/` |
 
-二选一，环境变量优先级更高：
+## Configuration / 配置
+
+Env vars take precedence over `config.json`. 环境变量优先于 `config.json`：
 
 ```bash
-# 方式一：复制示例配置并填入 API key（config.json 已被 .gitignore 排除，不会提交）
-cp config.example.json config.json
-# 编辑 config.json 填入 api_key
+# Option 1: config file（配置文件）
+cp config.example.json config.json   # fill in your api_key
 
-# 方式二：环境变量
+# Option 2: env vars（环境变量）
 export VISION_API_KEY=sk-xxxx
 ```
 
-## 使用
+## Usage / 使用
 
-新会话中，当用户提供图片而当前模型无法直接查看时，模型会自动加载本 skill；也可以手动触发：
+The skill triggers automatically in new sessions when the user provides an image the current model cannot see. You can also call it manually:
+新会话中，当用户提供图片而当前模型无法查看时，技能会自动触发；也可以手动调用：
 
 ```bash
-python3 ~/.zcode/skills/image-analysis-fallback/analyze_image.py <图片路径> [问题]
+python3 analyze_image.py <image-path> "[question]"
 ```
 
-## 支持的 API 格式
+## Supported API formats / 支持的 API 格式
 
-`config.json` 的 `api_type` 字段（或环境变量 `VISION_API_TYPE`）选择接口格式：
+Set `api_type` in `config.json` (or `VISION_API_TYPE`) to choose the API dialect:
+通过 `config.json` 的 `api_type` 字段（或环境变量 `VISION_API_TYPE`）选择接口格式：
 
-| api_type | 适用服务 | api_url 示例 |
+| api_type | Providers | Example api_url |
 |---|---|---|
-| `anthropic`（默认） | Claude 直连、DashScope Anthropic 兼容接口 | `https://api.anthropic.com/v1/messages`、`https://coding.dashscope.aliyuncs.com/apps/anthropic/v1/messages` |
-| `openai` | OpenAI、通义千问 OpenAI 兼容模式、Ollama、vLLM、LM Studio 等 | `https://api.openai.com/v1/chat/completions`、`https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions` |
-| `gemini` | Google Gemini 原生接口（api_url 为 base 地址，模型名自动拼入 URL） | `https://generativelanguage.googleapis.com/v1beta` |
-| `dashscope` | 阿里云 DashScope 原生多模态接口 | `https://dashscope.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation` |
+| `anthropic` (default) | Claude, DashScope Anthropic-compatible | `https://api.anthropic.com/v1/messages` |
+| `openai` | OpenAI, Qwen OpenAI-compatible mode, Ollama, vLLM, LM Studio | `https://api.openai.com/v1/chat/completions` |
+| `gemini` | Google Gemini native (`api_url` is the base URL; model name is appended) | `https://generativelanguage.googleapis.com/v1beta` |
+| `dashscope` | Alibaba DashScope native multimodal API | `https://dashscope.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation` |
 
-## 配置项
+## Options / 配置项
 
-| 环境变量 | 说明 | 默认值 |
+| Env var | Description | Default |
 |---|---|---|
-| `VISION_API_TYPE` | 接口格式（anthropic / openai / gemini / dashscope） | `anthropic` |
-| `VISION_API_KEY` | API key（优先级高于 config.json） | 读取 `config.json` |
-| `VISION_API_URL` | Anthropic 兼容 messages 接口地址 | `https://coding.dashscope.aliyuncs.com/apps/anthropic/v1/messages` |
-| `VISION_MODEL` | 模型名 | `qwen3.7-plus` |
-| `VISION_MAX_TOKENS` | 最大输出 token 数 | `1024` |
+| `VISION_API_TYPE` | API dialect: anthropic / openai / gemini / dashscope | `anthropic` |
+| `VISION_API_KEY` | API key (overrides config.json) | from `config.json` |
+| `VISION_API_URL` | API endpoint (for `gemini`: base URL) | per api_type |
+| `VISION_MODEL` | Model name | `qwen3.7-plus` |
+| `VISION_MAX_TOKENS` | Max output tokens | `1024` |
 
-## 安全
+## Security / 安全
 
-- `config.json` 包含真实 API key，已被 `.gitignore` 排除，不会提交到仓库
-- 分析结果只输出到 stdout，不落盘、不保存图片
-- 兼容任何 Anthropic Messages 格式的服务（如 Claude 直连），只需改 `VISION_API_URL` / `VISION_MODEL`
+- `config.json` holds your real API key and is excluded via `.gitignore` — never commit it. `config.json` 含真实 API key，已被 `.gitignore` 排除，请勿提交。
+- Analysis results go to stdout only; images and results are never persisted. 分析结果只输出到 stdout，图片与结果均不落盘。
+- `config.example.json` is a template with placeholder values. `config.example.json` 是带占位值的模板。
