@@ -33,10 +33,22 @@ export VISION_API_KEY=sk-xxxx
 python3 ~/.zcode/skills/image-analysis-fallback/analyze_image.py <图片路径> [问题]
 ```
 
+## 支持的 API 格式
+
+`config.json` 的 `api_type` 字段（或环境变量 `VISION_API_TYPE`）选择接口格式：
+
+| api_type | 适用服务 | api_url 示例 |
+|---|---|---|
+| `anthropic`（默认） | Claude 直连、DashScope Anthropic 兼容接口 | `https://api.anthropic.com/v1/messages`、`https://coding.dashscope.aliyuncs.com/apps/anthropic/v1/messages` |
+| `openai` | OpenAI、通义千问 OpenAI 兼容模式、Ollama、vLLM、LM Studio 等 | `https://api.openai.com/v1/chat/completions`、`https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions` |
+| `gemini` | Google Gemini 原生接口（api_url 为 base 地址，模型名自动拼入 URL） | `https://generativelanguage.googleapis.com/v1beta` |
+| `dashscope` | 阿里云 DashScope 原生多模态接口 | `https://dashscope.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation` |
+
 ## 配置项
 
 | 环境变量 | 说明 | 默认值 |
 |---|---|---|
+| `VISION_API_TYPE` | 接口格式（anthropic / openai / gemini / dashscope） | `anthropic` |
 | `VISION_API_KEY` | API key（优先级高于 config.json） | 读取 `config.json` |
 | `VISION_API_URL` | Anthropic 兼容 messages 接口地址 | `https://coding.dashscope.aliyuncs.com/apps/anthropic/v1/messages` |
 | `VISION_MODEL` | 模型名 | `qwen3.7-plus` |
