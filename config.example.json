@@ -1,0 +1,5 @@
+{
+  "api_key": "sk-请替换为你的APIKey",
+  "api_url": "https://coding.dashscope.aliyuncs.com/apps/anthropic/v1/messages",
+  "model": "qwen3.7-plus"
+}

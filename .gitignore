@@ -1,0 +1,9 @@
+# 真实配置（含 API key）不入库
+config.json
+
+# 环境变量文件
+.env
+*.env
+
+# Python
+__pycache__/
