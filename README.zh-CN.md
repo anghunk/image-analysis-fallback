@@ -61,9 +61,3 @@ python3 analyze_image.py <图片路径> "[问题]"
 | `VISION_API_URL` | 接口地址（gemini 类型为 base 地址） | 随 api_type |
 | `VISION_MODEL` | 模型名 | `qwen3.7-plus` |
 | `VISION_MAX_TOKENS` | 最大输出 token 数 | `1024` |
-
-## 安全
-
-- `config.json` 含真实 API key，已被 `.gitignore` 排除，请勿提交。
-- 分析结果只输出到 stdout，图片与结果均不落盘。
-- `config.example.json` 是带占位值的模板。
