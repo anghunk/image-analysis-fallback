@@ -61,9 +61,3 @@ Set `api_type` in `config.json` (or `VISION_API_TYPE`) to choose the API dialect
 | `VISION_API_URL` | API endpoint (for `gemini`: base URL) | per api_type |
 | `VISION_MODEL` | Model name | `qwen3.7-plus` |
 | `VISION_MAX_TOKENS` | Max output tokens | `1024` |
-
-## Security
-
-- `config.json` holds your real API key and is excluded via `.gitignore` — never commit it.
-- Analysis results go to stdout only; images and results are never persisted.
-- `config.example.json` is a template with placeholder values.
