@@ -8,6 +8,14 @@
 
 ## 安装
 
+**推荐：**
+
+将下面这段话发给你的 AI Agent:
+
+```
+帮我安装下面这个 skills 放在本地，https://github.com/anghunk/image-analysis-fallback ，并告诉我如果配置相关 key。
+```
+
 将本仓库克隆或软链到任意技能的扫描目录：
 
 ```bash
