@@ -8,6 +8,14 @@ Works with any agent that supports `SKILL.md` — Claude Code, Codex, Cursor, ZC
 
 ## Install
 
+**Recommended:**
+
+Send the following paragraph to your AI Agent:
+
+```
+Please install the following skills locally at https://github.com/anghunk/image-analysis-fallback, and tell me about the related configuration keys.
+```
+
 Clone or symlink this repo into any skill directory:
 
 ```bash
